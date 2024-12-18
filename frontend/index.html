@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Order Ranked Duels</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            --glass-bg: rgba(16, 18, 27, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --agatha-primary: #1e40af;
+            --agatha-secondary: #3b82f6;
+            --mason-primary: #991b1b;
+            --mason-secondary: #dc2626;
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --success: #15803d;
+            --danger: #b91c1c;
+            --warning: #92400e;
+            --medieval-gold: #b45309;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            background: linear-gradient(135deg, #020617 0%, #1e1b4b 50%, #450a0a 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.5;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        .nav {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--medieval-gold);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--medieval-gold);
+            text-decoration: none;
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .nav-logo svg {
+            color: var(--medieval-gold);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 1rem;
+            margin-right: 1rem;
+            position: relative;
+            margin-left: auto;
+        }
+
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            width: 18px;
+            height: 18px;
+            color: var(--text-secondary);
+            opacity: 0.8;
+            pointer-events: none;
+        }
+
+        .search-input {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            padding: 0.6rem 1.2rem 0.6rem 2.8rem;
+            border-radius: 0.5rem;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(180, 83, 9, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            width: 200px;
+            transition: all 200ms ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            color: var(--medieval-gold);
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--medieval-gold);
+            box-shadow: 0 0 15px rgba(180, 83, 9, 0.2);
+            width: 300px;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 200ms ease;
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.5rem;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(180, 83, 9, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .nav-link svg {
+            width: 18px;
+            height: 18px;
+            opacity: 0.8;
+        }
+
+        .nav-link:hover {
+            color: var(--medieval-gold);
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--medieval-gold);
+            box-shadow: 0 0 15px rgba(180, 83, 9, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .nav-link:active {
+            transform: translateY(0px);
+        }
+
+        .main-container {
+            display: flex;
+            padding: 2rem;
+            gap: 2rem;
+            max-width: 1536px;
+            margin: 0 auto;
+        }
+
+        .sidebar {
+            width: 16rem;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--medieval-gold);
+            border-radius: 1rem;
+            overflow: hidden;
+            flex-shrink: 0;
+            height: 760px;
+            margin-top: 35px;
+        }
+
+        .sidebar-section {
+            /* Remove only the border-bottom, keep everything else the same */
+        }
+
+        .sidebar-header {
+            font-weight: 600;
+            color: var(--medieval-gold);
+            font-size: 0.875rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 50px;
+            padding-top: 1.5rem;
+        }
+
+        .sidebar-header.featured {
+            color: var(--medieval-gold);
+            background: rgba(180, 83, 9, 0.2);
+            border-bottom: 1px solid var(--medieval-gold);
+        }
+
+        .sidebar-item {
+            padding: 0.75rem 1rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            transition: all 200ms ease;
+            font-size: 0.875rem;
+        }
+
+        .rank-tier {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid transparent;
+            border-radius: 0.5rem;
+            margin: 0.5rem;
+            padding: 1rem;
+        }
+
+        .rank-icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .rank-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .rank-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .rank-elo {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .rank-tier.grandmaster {
+            color: #ff4655;
+            border-color: rgba(255, 70, 85, 0.3);
+            box-shadow: 0 0 15px rgba(255, 70, 85, 0.15);
+        }
+
+        .rank-tier.master {
+            color: #ff8c00;
+            border-color: rgba(255, 140, 0, 0.3);
+            box-shadow: 0 0 15px rgba(255, 140, 0, 0.15);
+        }
+
+        .rank-tier.diamond {
+            color: #00ffff;
+            border-color: rgba(0, 255, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.15);
+        }
+
+        .rank-tier.platinum {
+            color: #00ff9d;
+            border-color: rgba(0, 255, 157, 0.3);
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.15);
+        }
+
+        .rank-tier.gold {
+            color: #ffd700;
+            border-color: rgba(255, 215, 0, 0.3);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.15);
+        }
+
+        .rank-tier.silver {
+            color: #c0c0c0;
+            border-color: rgba(192, 192, 192, 0.3);
+            box-shadow: 0 0 15px rgba(192, 192, 192, 0.15);
+        }
+
+        .rank-tier.bronze {
+            color: #cd7f32;
+            border-color: rgba(205, 127, 50, 0.3);
+            box-shadow: 0 0 15px rgba(205, 127, 50, 0.15);
+        }
+
+        .rank-tier:hover {
+            transform: translateX(4px);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: currentColor;
+            box-shadow: 0 0 20px currentColor;
+        }
+
+        .rank-tier .rank-icon {
+            filter: drop-shadow(0 0 8px currentColor);
+        }
+
+        .content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .breadcrumb a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 200ms ease;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--medieval-gold);
+        }
+
+        .page-title {
+            font-size: 2.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            letter-spacing: -0.025em;
+            line-height: 1.2;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        .leaderboard-container {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--medieval-gold);
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            box-shadow: 0 0 20px rgba(180, 83, 9, 0.2);
+        }
+
+        .leaderboard-container:hover {
+            transform: translateY(-4px);
+        }
+
+        .leaderboard-header {
+            display: flex;
+            padding: 1rem 1.5rem;
+            color: var(--medieval-gold);
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            background: rgba(180, 83, 9, 0.2);
+            border-bottom: 1px solid var(--medieval-gold);
+        }
+
+        .leaderboard-row {
+            display: flex;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(180, 83, 9, 0.3);
+            transition: all 200ms ease;
+            font-size: 0.875rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .leaderboard-row::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(180, 83, 9, 0.2), 
+                transparent
+            );
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
+        }
+
+        .leaderboard-row:hover::before {
+            transform: translateX(100%);
+        }
+
+        .leaderboard-row:hover {
+            background: rgba(180, 83, 9, 0.2);
+            transform: translateX(4px);
+        }
+
+        .col-rank {
+            width: 4rem;
+            display: flex;
+            align-items: center;
+            color: var(--medieval-gold);
+            font-weight: 500;
+        }
+
+        .col-player {
+            flex: 1;
+            padding-left: 1.25rem;
+            min-width: 0;
+        }
+
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .player-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 200ms ease;
+            font-weight: 500;
+        }
+
+        .leaderboard-row:hover .player-link {
+            color: var(--text-primary);
+            transform: translateX(4px);
+        }
+
+        .player-icon {
+            width: 1rem;
+            height: 1rem;
+            opacity: 0.5;
+            flex-shrink: 0;
+            fill: currentColor;
+        }
+
+        .col-wins, .col-losses {
+            width: 7rem;
+            text-align: right;
+            padding-right: 2.5rem;
+            color: var(--text-secondary);
+            font-variant-numeric: tabular-nums;
+            transition: all 200ms ease;
+        }
+
+        .col-wins {
+            color: var(--success);
+        }
+
+        .col-losses {
+            color: var(--danger);
+        }
+
+        .col-clan {
+            width: 5rem;
+            text-align: right;
+            padding-right: 1rem;
+            color: var(--warning);
+            font-weight: 500;
+            transition: all 200ms ease;
+        }
+
+        .trophy-icon {
+            margin-right: 0.5rem;
+            width: 1rem;
+            height: 1rem;
+            display: inline-block;
+            vertical-align: middle;
+            opacity: 0.9;
+            flex-shrink: 0;
+            filter: drop-shadow(0 0 8px currentColor);
+            fill: currentColor;
+        }
+
+        .rank-1 .trophy-icon {
+            color: var(--medieval-gold);
+            filter: drop-shadow(0 0 10px rgba(180, 83, 9, 0.5));
+        }
+
+        .rank-2 .trophy-icon {
+            color: #94a3b8;
+            filter: drop-shadow(0 0 8px rgba(148, 163, 184, 0.5));
+        }
+
+        .rank-3 .trophy-icon {
+            color: #92400e;
+            filter: drop-shadow(0 0 8px rgba(146, 64, 14, 0.5));
+        }
+
+        .na {
+            color: var(--text-secondary);
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+        }
+
+        .rank-tier:first-of-type {
+            margin-top: 2rem;
+        }
+
+        .rank-tier:last-of-type {
+            margin-bottom: 4rem;
+        }
+
+        .col-elo {
+            width: 7rem;
+            text-align: right;
+            padding-right: 2.5rem;
+            color: var(--medieval-gold);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            margin-right: 1rem;
+        }
+
+        .pagination-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 0;
+            padding: 1.5rem;
+            border-top: 1px solid rgba(180, 83, 9, 0.3);
+            background: rgba(180, 83, 9, 0.1);
+            border-bottom-left-radius: 1rem;
+            border-bottom-right-radius: 1rem;
+        }
+
+        .pagination-btn {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--medieval-gold);
+            color: var(--medieval-gold);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 200ms ease;
+            min-width: 90px;
+            text-align: center;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: rgba(180, 83, 9, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 0 15px rgba(180, 83, 9, 0.2);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: rgba(180, 83, 9, 0.3);
+        }
+
+        .pagination-info {
+            color: var(--medieval-gold);
+            font-size: 0.875rem;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(180, 83, 9, 0.3);
+            min-width: 120px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+
+    <nav class="nav">
+        <a href="/" class="nav-logo">
+            <img src="../images/logo/logo.png" alt="The Order Logo" width="32" height="32" style="object-fit: contain; margin-top: 2px;">
+            The Order Ranked Duels
+        </a>
+        <div class="nav-menu">
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search player...">
+                <span class="search-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-header">Ranking Tiers</div>
+                
+                <div class="sidebar-item rank-tier grandmaster">
+                    <svg class="rank-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 2.18l7 3.12v4.92c0 4.54-2.99 8.79-7 10.05-4.01-1.26-7-5.51-7-10.05V6.3l7-3.12z"/>
+                        <path d="M11 7h2v2h-2zm0 4h2v6h-2z"/>
+                    </svg>
+                    <div class="rank-info">
+                        <div class="rank-name">Grandmaster</div>
+                        <div class="rank-elo">2000+ ELO</div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-item rank-tier master">
+                    <svg class="rank-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 2.18l7 3.12v4.92c0 4.54-2.99 8.79-7 10.05-4.01-1.26-7-5.51-7-10.05V6.3l7-3.12z"/>
+                    </svg>
+                    <div class="rank-info">
+                        <div class="rank-name">Master</div>
+                        <div class="rank-elo">1800-2000 ELO</div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-item rank-tier diamond">
+                    <svg class="rank-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2L2 12l10 10 10-10L12 2zm0 2.83L19.17 12 12 19.17 4.83 12 12 4.83z"/>
+                    </svg>
+                    <div class="rank-info">
+                        <div class="rank-name">Diamond</div>
+                        <div class="rank-elo">1600-1800 ELO</div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-item rank-tier platinum">
+                    <svg class="rank-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2L2 12l10 10 10-10L12 2z"/>
+                    </svg>
+                    <div class="rank-info">
+                        <div class="rank-name">Platinum</div>
+                        <div class="rank-elo">1400-1600 ELO</div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-item rank-tier gold">
+                    <svg class="rank-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                    </svg>
+                    <div class="rank-info">
+                        <div class="rank-name">Gold</div>
+                        <div class="rank-elo">1200-1400 ELO</div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-item rank-tier silver">
+                    <svg class="rank-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                    </svg>
+                    <div class="rank-info">
+                        <div class="rank-name">Silver</div>
+                        <div class="rank-elo">1000-1200 ELO</div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-item rank-tier bronze">
+                    <svg class="rank-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                    </svg>
+                    <div class="rank-info">
+                        <div class="rank-name">Bronze</div>
+                        <div class="rank-elo">&lt;1000 ELO</div>
+                    </div>
+                </div>
+                
+            </div>
+        </aside>
+
+        <main class="content">
+            <h1 class="page-title">Ranked Duels Leaderboard</h1>
+            <p class="page-subtitle">View the top duelists rankings, stats, and match history for The Order server</p>
+
+            <div class="leaderboard-container">
+                <div class="leaderboard-header">
+                    <span class="col-rank">Rank</span>
+                    <span class="col-player">Player</span>
+                    <span class="col-elo">ELO</span>
+                    <span class="col-wins">Wins</span>
+                    <span class="col-losses">Losses</span>
+                    <span class="col-clan">Clan</span>
+                </div>
+                <div id="leaderboard-body">
+                    <!-- Rows will be populated by app.js -->
+                </div>
+                <div id="pagination-controls" class="pagination-controls">
+                    <!-- Pagination controls will be populated by app.js -->
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // Initialize particles
+        particlesJS('particles-js', {
+            particles: {
+                number: {
+                    value: 60,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: {
+                    value: ['#1e40af', '#991b1b', '#b45309']
+                },
+                shape: {
+                    type: 'circle'
+                },
+                opacity: {
+                    value: 0.6,
+                    random: true,
+                    anim: {
+                        enable: true,
+                        speed: 1,
+                        opacity_min: 0.1,
+                        sync: false
+                    }
+                },
+                size: {
+                    value: 4,
+                    random: true,
+                    anim: {
+                        enable: true,
+                        speed: 2,
+                        size_min: 0.1,
+                        sync: false
+                    }
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: '#b45309',
+                    opacity: 0.3,
+                    width: 1.5
+                },
+                move: {
+                    enable: true,
+                    speed: 1.5,
+                    direction: 'none',
+                    random: true,
+                    straight: false,
+                    out_mode: 'out',
+                    bounce: false,
+                    attract: {
+                        enable: true,
+                        rotateX: 600,
+                        rotateY: 1200
+                    }
+                }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: 'grab'
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: 'push'
+                    },
+                    resize: true
+                },
+                modes: {
+                    grab: {
+                        distance: 180,
+                        line_linked: {
+                            opacity: 0.8
+                        }
+                    },
+                    push: {
+                        particles_nb: 6
+                    }
+                }
+            },
+            retina_detect: true
+        });
+    </script>
+    <script src="app.js"></script>
+</body>
+</html>

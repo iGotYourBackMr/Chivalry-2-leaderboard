@@ -1,0 +1,13 @@
+{
+  "name": "leaderboard-frontend",
+  "version": "1.0.0",
+  "description": "Leaderboard frontend application",
+  "main": "app.js",
+  "scripts": {
+    "start": "live-server --port=8000 --no-browser"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+} 
