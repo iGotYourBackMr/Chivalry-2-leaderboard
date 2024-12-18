@@ -1,0 +1,38 @@
+[
+  {
+    "rank": 1,
+    "player": "DragonSlayer",
+    "wins": 542,
+    "losses": 123,
+    "clan": "ELITE"
+  },
+  {
+    "rank": 2,
+    "player": "ShadowBlade",
+    "wins": 498,
+    "losses": 145,
+    "clan": "DARK"
+  },
+  {
+    "rank": 3,
+    "player": "KnightKing",
+    "wins": 467,
+    "losses": 167,
+    "clan": "ROYAL"
+  },
+  {
+    "rank": 4,
+    "player": "WarriorQueen",
+    "wins": 445,
+    "losses": 178,
+    "clan": "ELITE"
+  },
+  {
+    "rank": 5,
+    "player": "BattleMaster",
+    "wins": 423,
+    "losses": 189,
+    "clan": "DARK"
+  }
+]
+  
